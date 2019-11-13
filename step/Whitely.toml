@@ -58,7 +58,7 @@
 
 [Test]
     [Test.IncrementBuild]
-        FileNeedCompare = ['\Intel\*LBG_ME11.bin','\Intel\*HLBG_SPS.bin','\Intel\*LBG_SPS.bin','\Intel\*LBG_ME11.rom','\Intel\*HLBG_SPS.rom','\Intel\*LBG_SPS.rom','\Intel\*LBG_SPS_Pfr_Container.zip.bin']
+        FileNeedCompare = ['\Intel\*LBG_ME11.bin','\Intel\*HLBG_SPS.bin','\Intel\*LBG_SPS.bin','\Intel\*LBG_ME11.rom','\Intel\*HLBG_SPS.rom','\Intel\*LBG_SPS.rom']
         TargetRepo='intel'
     [Test.TestBuild]
         TestMethod = 'Env'
