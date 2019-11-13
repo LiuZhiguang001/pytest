@@ -1,0 +1,41 @@
+[Defines]
+    projectname = "Ovmf"
+    workspace = "E:\\github"
+    cache_dir = ""
+
+[[Repo]]
+    name = 'edk2'
+    path = 'edk2'
+    git = 'https://github.com/tianocore/edk2.git'
+    branch = 'master'
+    version = 'head'
+
+[Basic]
+    [[Basic.step]]
+        name = "SetupEnv"
+        depends = []
+        [Basic.step.command]
+            cmd = "edksetup"
+            parameters = ["Rebuild"]
+            path = ['edk2','']
+        output_type = ['EnvVar','File']
+    [[Basic.step]]
+        name = "BuildClean"
+        depends = []
+        [Basic.step.command]
+            cmd = 'build'
+            parameters = ['cleanall','-p','OvmfPkg\OvmfPkgX64.dsc', '-a', 'X64', '-t', 'VS2015x86', '-b', 'RELEASE']
+            path = ['edk2','']
+        output_type = ['File']
+    [[Basic.step]]
+        name = "BuildPlatform"
+        depends = []
+        [Basic.step.command]
+            cmd = 'build'
+            parameters = ['-p','OvmfPkg\OvmfPkgX64.dsc', '-a', 'X64', '-t', 'VS2015x86', '-b', 'RELEASE','-y','report.txt']
+            path = ['edk2','']
+        output_type = ['File']
+[Test]
+    [Test.IncrementBuild]
+        FileNeedCompare = ['\edk2\Build\OvmfX64\RELEASE_VS2015x86\FV\OVMF.fd']
+        TargetRepo='edk2'
