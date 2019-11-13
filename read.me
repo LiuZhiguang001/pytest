@@ -1,3 +1,17 @@
+command example
+
+
+C:\Python37\Scripts\pytest.exe Incrementalbuild_test.py --Target D:\pytest1\step\Whitely.toml --NewTestCaseNumber 1 --NewTestCasePath D:\pytest1\patch -m IncrementBuild --run --capture=sys
+
+C:\Python37\Scripts\pytest.exe Incrementalbuild_test.py --Target D:\pytest1\step\Whitely.toml --NewTestCaseNumber 2 --NewTestCasePath D:\pytest1\patch -m IncrementBuild --run --capture=sys
+
+
+C:\Python37\Scripts\pytest.exe Incrementalbuild_test.py  --Target D:\pytest1\step\Ovmf.toml --TestCasePath D:\pytest1\patch\status.pickle -m IncrementBuild
+
+
+step file example
+
+
 [Defines]
     projectname = "Ovmf"
     workspace = "E:\\github"
