@@ -9,11 +9,8 @@ import os
 import subprocess
 import glob
 
-class Test_WhitelyIncrementBuild(object):
-    @pytest.fixture(scope='module')
-    def am_patch(self):
-        pass
-    
+class Test_IncrementBuild(object):
+
     def CopyFile(self,destpath):
         NewBinFile=self.savepath+'\\'+destpath+'\\'
         for affix in self.manifest.TestType['IncrementBuild']['FileNeedCompare']:
@@ -40,7 +37,6 @@ class Test_WhitelyIncrementBuild(object):
                 shutil.copyfile(binlist[-1][0],os.path.join(NewBinFile,os.path.basename(name)))
             else:
                 raise NameError('no such file')
- 
 
     def CompareBin(self,clean,increment):
         CleanPath=self.savepath+'\\'+clean+'\\'
@@ -56,31 +52,39 @@ class Test_WhitelyIncrementBuild(object):
             return False
         return True
 
+    def CleanOldFile(self):
+        BinFilePath=self.savepath+'\\'+'CleanPath'+'\\'
+        if os.path.exists(BinFilePath):
+            shutil.rmtree(BinFilePath)
+        os.makedirs(BinFilePath)
+        BinFilePath=self.savepath+'\\'+'IncrementPath'+'\\'
+        if os.path.exists(BinFilePath):
+            shutil.rmtree(BinFilePath)
+        os.makedirs(BinFilePath)
+
     @pytest.mark.IncrementBuild
     def test_IncrementBuild(self,PatchList):
 
         print('begin to test')
+        self.CleanOldFile()
         self.repo_mgr.clean_all()
         self.repo_mgr.reset_all()
-        
+
+        #Clean build
         self.TargetRepo.checkout(PatchList[1],'clean')
         self.TargetRepo.apply_patches([PatchList[0]])
         BuildPlatform(self.manifest.Defines.get("workspace"),self.manifest.BuildCate.get("Basic"),[],self.repo_mgr)
-        
-        NewBinFile=self.savepath+'\\'+'CleanPath'+'\\'
-        if os.path.exists(NewBinFile):
-            shutil.rmtree(NewBinFile)
-        os.makedirs(NewBinFile)
-        NewBinFile=self.savepath+'\\'+'IncrementPath'+'\\'
-        if os.path.exists(NewBinFile):
-            shutil.rmtree(NewBinFile)
-        os.makedirs(NewBinFile)
         self.CopyFile('CleanPath')
+
         self.repo_mgr.clean_all()
         self.repo_mgr.reset_all()
+
+        #Incremental build
         self.TargetRepo.checkout(PatchList[1],'increment')
         BuildPlatform(self.manifest.Defines.get("workspace"),self.manifest.BuildCate.get("Basic"),[],self.repo_mgr) 
         self.TargetRepo.apply_patches([PatchList[0]])
         BuildPlatform(self.manifest.Defines.get("workspace"),self.manifest.BuildCate.get("Basic"),['BuildClean'],self.repo_mgr)   
         self.CopyFile('IncrementPath')
+
+
         assert self.CompareBin('CleanPath','IncrementPath')
