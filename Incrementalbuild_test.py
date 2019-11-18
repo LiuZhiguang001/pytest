@@ -19,21 +19,24 @@ class Test_IncrementBuild(object):
             print('-----')
             print(affix)
             print(self.workspace)
-            for BinFile in glob.glob(self.workspace+affix):
+            if affix[0]!='':
+                path=self.repo_mgr.get_repo(affix[0]).path
+            else:
+                path=self.workspace
+            affix=affix[1]
+            for BinFile in glob.glob(path+affix):
                 binlist.append((BinFile, os.path.getmtime(BinFile)))
             binlist = sorted(binlist, key=lambda k: k[1])
-            if '*' in affix:
-                index = affix.find('*')
+
+            affix =affix.replace('*','')
+            if '\\' in affix:
+                index = affix.find('\\')
                 name = affix[index+1:]
+                while index != -1:
+                    name = name[index+1:]
+                    index = name.find('\\')
             else:
-                if '\\' in affix:
-                    index = affix.find('\\')
-                    name = affix[index+1:]
-                    while index != -1:
-                        name = name[index+1:]
-                        index = name.find('\\')
-                else:
-                    name = affix
+                name = affix
             if binlist != []:
                 shutil.copyfile(
                     binlist[-1][0], os.path.join(NewBinFile, os.path.basename(name)))
@@ -65,11 +68,9 @@ class Test_IncrementBuild(object):
         os.makedirs(BinFilePath)
 
     @pytest.mark.IncrementBuild
-    def test_IncrementBuild(self, PatchList):
-
+    def test_IncrementBuild(self, PatchList, BaseToolPatch):
         if PatchList[2] == 'Tested Success':
             return
-
         self.PatchList.ChangeStatus(PatchList,'Build Fail')
         PatchList[2] = 'Build Fail'
 
@@ -81,6 +82,8 @@ class Test_IncrementBuild(object):
         # Clean build
         self.TargetRepo.checkout(PatchList[1], 'clean')
         self.TargetRepo.apply_patches([PatchList[0]])
+        if BaseToolPatch != ' ':
+            self.repo_mgr.get_repo('edk2').apply_patches([BaseToolPatch])
         BuildPlatform(self.manifest.Defines.get("workspace"),
                       self.manifest.BuildCate.get("Basic"), [], self.repo_mgr)
         self.CopyFile('CleanPath')
@@ -90,6 +93,8 @@ class Test_IncrementBuild(object):
 
         # Incremental build
         self.TargetRepo.checkout(PatchList[1], 'increment')
+        if BaseToolPatch != ' ':
+            self.repo_mgr.get_repo('edk2').apply_patches([BaseToolPatch])
         BuildPlatform(self.manifest.Defines.get("workspace"),
                       self.manifest.BuildCate.get("Basic"), [], self.repo_mgr)
         self.TargetRepo.apply_patches([PatchList[0]])

@@ -34,7 +34,7 @@ class Repo():
     def clean(self):
         ''' clean all the un-tracked files '''
         print("begin clean "+self.name+ "repo")
-        cmd = 'git clean -xfd'
+        cmd = 'git clean -ffdx'
         rt=subprocess.run(cmd,cwd=self.path,shell=True)
         if rt.returncode != 0:
             print(rt.stderr)
@@ -44,7 +44,8 @@ class Repo():
         
         
     def reset(self):
-        cmd = 'git checkout -- .'
+        cmd = 'git reset --hard'
+        
         #print("begin reset "+self.name+ "repo")
         rt=subprocess.run(cmd,cwd=self.path,shell=True)
 

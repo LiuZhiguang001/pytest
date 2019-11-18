@@ -47,6 +47,13 @@ def pytest_addoption(parser):
         dest="Target",
         help="Specify a platform target"
     )
+    parser.addoption(
+        "--patch",
+        action="store",
+        default=' ',
+        dest="patch",
+        help="Specify a build tool patch for test"
+    )
 
 
 def pytest_generate_tests(metafunc):
@@ -56,6 +63,7 @@ def pytest_generate_tests(metafunc):
     IsRun = metafunc.config.getoption("IsRun")
     NewTestCasePath = metafunc.config.getoption("NewTestCasePath")
     Target = metafunc.config.getoption("Target")
+    patch = metafunc.config.getoption("patch")
     Marker = metafunc.config.getoption("-m")
     print(Marker)
     manifest = Manifest(Target)
@@ -75,13 +83,9 @@ def pytest_generate_tests(metafunc):
     if TestCaseNumber != " ":
         if TestCaseNumber.isnumeric():
 
-            # get repo information and reset all the repos
-
-            
+            # get repo information and reset all the repos  
             repo_mgr.clean_all()
             repo_mgr.reset_all()
-            
-
             TestCaseNumber = int(TestCaseNumber)
             PatchList = GeneratePatch(
                 Number=TestCaseNumber, repo=TargetRepo.path, PatchDir=NewTestCasePath)
@@ -92,7 +96,9 @@ def pytest_generate_tests(metafunc):
             return
     elif TestCasePath != " ":
         PatchList = ManagePatchStatus(PicklePath=TestCasePath)
+
     if IsRun:
+        metafunc.parametrize("BaseToolPatch", [patch])
         metafunc.cls.workspace = workspace
         metafunc.cls.repo_mgr = repo_mgr
         metafunc.cls.manifest = manifest
@@ -113,6 +119,7 @@ def pytest_generate_tests(metafunc):
     except:
         print("Argument is not right")
     metafunc.parametrize("PatchList", [])
+    metafunc.parametrize("BaseToolPatch", [])
 
 
 

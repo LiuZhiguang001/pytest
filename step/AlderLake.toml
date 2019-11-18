@@ -1,0 +1,51 @@
+[Defines]
+    projectname = "AlderLake"
+    workspace = "E:\\ALD\\AlderLake\\AlderLake"
+    cache_dir = ""
+
+
+[[Repo]]
+    name = 'edk2'
+    path = 'Edk2'
+    git = 'https://github.com/tianocore/edk2.git'
+    branch = 'dev/adl_pss_bootcamp_q3/vprabhal'
+    version = 'head'
+[[Repo]]
+    name = 'edk2-platforms'
+    path = 'Edk2Platforms'
+    git = 'https://github.com/tianocore/edk2-platforms.git'
+    branch = 'dev/adl_pss_bootcamp_q3/vprabhal'
+    version = 'head'
+
+
+[[Repo]]
+    name = 'intel'
+    path = 'Intel'
+    git = 'ssh://git-amr-7.devtools.intel.com:29418/iafw-intel.git'
+    branch = 'dev/adl_pss_bootcamp_q3/vprabhal'
+    version = 'head'
+
+[Basic]
+    [[Basic.step]]
+        name = "BuildClean"
+        depends = []
+        [Basic.step.command]
+            cmd = 'cln'
+            parameters = []
+            path = ['intel','AlderLakeBoardPkg']
+        output_type = ['File']
+    [[Basic.step]]
+        name = "BuildPlatform"
+        depends = []
+        [Basic.step.command]
+            cmd = 'prep'
+            parameters = ['r','&','bld']
+            path = ['intel','AlderLakeBoardPkg']
+        output_type = ['File']
+
+[Test]
+    [Test.IncrementBuild]
+        FileNeedCompare = [['','\RomImages\ADL*.rom']]
+        TargetRepo='intel'
+    [Test.TestBuild]
+        TestMethod = 'Env'
