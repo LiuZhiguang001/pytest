@@ -37,5 +37,5 @@
         output_type = ['File']
 [Test]
     [Test.IncrementBuild]
-        FileNeedCompare = ['edk2','\Build\OvmfX64\RELEASE_VS2015x86\FV\OVMF.fd']
+        FileNeedCompare = [['edk2','\Build\OvmfX64\RELEASE_VS2015x86\FV\OVMF.fd']]
         TargetRepo='edk2'

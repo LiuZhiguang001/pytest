@@ -16,9 +16,10 @@ class Test_IncrementBuild(object):
         NewBinFile = self.savepath+'\\'+destpath+'\\'
         for affix in self.manifest.TestType['IncrementBuild']['FileNeedCompare']:
             binlist = []
-            print('-----')
+            print('-----==========-------')
             print(affix)
             print(self.workspace)
+            print
             if affix[0]!='':
                 path=self.repo_mgr.get_repo(affix[0]).path
             else:
