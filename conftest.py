@@ -87,6 +87,10 @@ def pytest_generate_tests(metafunc):
             repo_mgr.clean_all()
             repo_mgr.reset_all()
             TestCaseNumber = int(TestCaseNumber)
+            if TestCaseNumber == 0:
+                metafunc.parametrize("PatchList", [])
+                metafunc.parametrize("BaseToolPatch", [])
+                return
             PatchList = GeneratePatch(
                 Number=TestCaseNumber, repo=TargetRepo.path, PatchDir=NewTestCasePath)
             PatchList.OutputPatch()
